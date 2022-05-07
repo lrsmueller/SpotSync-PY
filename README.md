@@ -25,8 +25,9 @@ export SPOTIPY_REDIRECT_URI='http://127.0.0.1:9090'
 ```
 
 ### Install
+install from main branch
 ``` 
-python3 -m pip install https://github.com/freeek3/SpotSync/releases/latest/download/spotsync.zip
+python3 -m pip install https://github.com/freeek3/SpotSync/archive/main.zip
 ```
 ### Run
 ```
