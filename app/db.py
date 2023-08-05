@@ -13,8 +13,11 @@ class User(Base):
     timezone = Column(String)
     token = Column(PickleType)
     
-    def __init__(self, description):
-        self.description = description
+    def __init__(self, username,playlist,timezone,token):
+        self.username = username
+        self.playlist = playlist
+        self.timezone = timezone
+        self.token = token
 
 
 from flask_sqlalchemy import SQLAlchemy

@@ -3,9 +3,9 @@ from spotipy.cache_handler import CacheHandler
 from sqlalchemy.orm import Session as SQLSession
 from sqlalchemy import update 
 
-from db import User, metadata
+from app.db import User, metadata
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("DBCacheHandler")
 class DBCacheHandler(CacheHandler):
     """
     A cache handler that stores(not tested) and retrieves token from da sqlalchemy database with and 
@@ -15,13 +15,15 @@ class DBCacheHandler(CacheHandler):
     def __init__(self, db, user):
         self.db = db
         self.user = user
-
+        logger.debug("init: " + self.user)
+        
     def get_cached_token(self):
         token_info = None
         try:
             token_info = self.user.token
+            logger.debug("token: " + token_info)
         except KeyError:
-            logger.debug("Token not found in the session")
+            logger.error("Token not found in the session")
 
         return token_info
 
@@ -36,5 +38,6 @@ class DBCacheHandler(CacheHandler):
             )
             session.execute(stmt)
             session.close()
+            logger.debug("Token saved")
         except Exception as e:
-            logger.warning("Error saving token to cache: " + str(e))
+            logger.error("Error saving token to cache: " + str(e))

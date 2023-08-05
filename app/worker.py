@@ -1,25 +1,27 @@
 import math
+import logging
 
 import spotipy
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session as SQLSession
+from sqlalchemy.orm import Session
 
-from cacheHandler import DBCacheHandler
-from db import User, metadata
-from config import config
+from app.cacheHandler import DBCacheHandler
+from app.db import User, metadata
+from app.config import Config
 
-engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])
-
-scope = "user-library-read playlist-read-private playlist-modify-private playlist-modify-public"
 #src:
 # https://stackoverflow.com/questions/41004540/using-sqlalchemy-models-in-and-out-of-flask
+
+#TODO worker.py more abstract to use in CLI app
+logger = logging.getLogger("app.worker")
+logger.info("logging started")
 
 def refresh_playlist(user, spotify=None):
     
     if (spotify is None):
-        cache_handler =  DBCacheHandler(db=engine, user=user)
-        auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
+        cache_handler =  DBCacheHandler(db=create_engine(Config.SQLALCHEMY_DATABASE_URI), user=user)
+        auth_manager = spotipy.oauth2.SpotifyOAuth(scope=Config.SCOPE,
                                                 cache_handler=cache_handler,
                                                 show_dialog=False)
         spotify = spotipy.Spotify(auth_manager=auth_manager)
@@ -30,7 +32,6 @@ def refresh_playlist(user, spotify=None):
         """Obtain your newly, to your libary, added tracks 
 
         Args:
-            sp (spotipy.Spotify): spotipy instance used
             max (int, optional): Maximum of Tracks obtained and later synced. Defaults to 100. Maximum 100
             limit (int, optional): Tracks per request. Defaults to 20. Maximum 20
 
@@ -50,9 +51,6 @@ def refresh_playlist(user, spotify=None):
 
     def remove_tracks():
         """Remove all tracks from the selected playlist
-
-        Args:
-            sp (spotipy.Spotify): spotipy instance used
         """
         # get tracks + owner id from spotify
         r=spotify.playlist(user.playlist,'owner.id,tracks.items')
@@ -64,22 +62,18 @@ def refresh_playlist(user, spotify=None):
         spotify.user_playlist_remove_all_occurrences_of_tracks(r['owner']['id'],user.playlist,remove_tracks)
 
     remove_tracks()
-    print("tracks removed")
     spotify.playlist_add_items(user.playlist,get_newest_tracks(spotify))
-    print("tracks added")
     
+    logger.info("refreshed Playlist")
     return None
     
 def refresh_all_playlists():
-    session = SQLSession(engine)
+    session = Session(create_engine(Config.SQLALCHEMY_DATABASE_URI))
     users = session.query(User).all()
-    print(users)
     session.close()
     
     for u in users:
-        print(u.username)
         refresh_playlist(u)
     
+    logger.info("all Playlists refreshed")
     return None
-
-#refresh_all_playlists() 403 insuffiecent client scope at start ? when imported makes sense as there is no api?
