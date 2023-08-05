@@ -8,3 +8,5 @@ class Config:
     SESSION_FILE_DIR = './app/.flask_session/'
     SCOPE = "user-library-read playlist-read-private playlist-modify-private playlist-modify-public"
     SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(64)
+    CRON_HOUR = os.environ.get('CRON_DAY') or 1
+    CRON_MINUTE = os.environ.get('CRON_MINUTE') or 0

@@ -30,11 +30,11 @@ def create_app(config_class=Config):
         db.create_all() # Create DB #TODO only if it doesnt exsist
         
         # Schedule Refresh Jobs
-        sched.add_job(refresh_all_playlists,trigger='cron', hour='20', minute='10') #TODO config
+        sched.add_job(refresh_all_playlists,trigger='cron', hour=Config.CRON_HOUR, minute=Config.CRON_MINUTE) #TODO config
         sched.start() 
         
         # Register blueprints
-        from .main import bp as main_bp
+        from app.routes import bp as main_bp
         app.register_blueprint(main_bp)
 
         return app
