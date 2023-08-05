@@ -82,4 +82,4 @@ def refresh_all_playlists():
     
     return None
 
-refresh_all_playlists()
+#refresh_all_playlists() 403 insuffiecent client scope at start ? when imported makes sense as there is no api?
