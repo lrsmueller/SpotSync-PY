@@ -1,0 +1,5 @@
+<ul>
+    {% for p in playlists %}
+    <li><a href="playlist/{{ p.id }}"">{{ p.name }}</a></li>
+    {% endfor %}
+</ul>

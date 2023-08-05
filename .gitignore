@@ -1,6 +1,9 @@
 .cache
 .playlist
 .env1
+*.env
+.flask_session
+project.db
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
