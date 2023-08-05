@@ -11,6 +11,7 @@ services:
       - db
     volumes:
       - ./app:/app
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
   docker_proxy:
