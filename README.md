@@ -3,6 +3,7 @@
 Sync the last 100 songs you added to your library in Spotify to a playlist. 
 
 Use Case: Download only your newest liked songs onto your smartphone rather than 2000+ if you have an extensive library like me.
+
 Motivation: I mostly hear my newest liked songs and wanted to download only some of my library.
 The Flask App was just thought of as practice and to learn some new technologies.
 
@@ -30,7 +31,8 @@ DATABASE_URI=sqlite:////app/project.db  # can be any sqlalchemy database URI
 ### Run 
 ##### docker run
 ```docker run --name spotsync ghcr.io/larsjmueller/SpotSync
---expose 8000:8000 \
+--expose 8000:8000 I am running a few minutes late; my previous meeting is running over.
+
 -e SPOTIPY_CLIENT_ID='your_client_id' \
 -e SPOTIPY_CLIENT_SECRET='your_client_secret' \
 -e SPOTIPY_REDIRECT_URI='http://127.0.0.1:8000' \
