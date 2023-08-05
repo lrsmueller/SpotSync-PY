@@ -1,80 +1,78 @@
 # SpotSync
 
-Sync your last 100 songs you added to your libary in Spotify to a playlist 
+Sync the last 100 songs you added to your library in Spotify to a playlist. 
 
-Use case: Download your newest songs not in special playlists so you dont need to download your complete libary
+Use Case: Download only your newest liked songs onto your smartphone rather than 2000+ if you have an extensive library like me.
+Motivation: I mostly hear my newest liked songs and wanted to download only some of my library.
+The Flask App was just thought of as practice and to learn some new technologies.
 
 ## Setup
-
-### Requirements
-
-- Python3
-- spotipy
-- [Spotify Web API Application](https://developers.spotify.com/)
+### Prerequisites
+- [Spotify Web API Application](https://developers.spotify.com/) with 
   - client secret
   - client id
-  - redirect uri: http://127.0.0.1:9090 change port to your likings
-- Virtual Enviroment
-
-### Enviroment Variables
-add these enviroment variables to your venv/system
+  - redirect URIs to your localhost (`http://127.0.0.1:8000/callback`) or
+  
+  an IP/domain like `spotsync.example.org/callback`
+  
+  **Important is the** `/callback` **path**
+  
+### Enviroment variables
+Configuration of the app happens through environment variables. 
+create a `.env` file or insert them into your `docker-compose.yaml`
 ```
-export SPOTIPY_CLIENT_ID='your_id'
-export SPOTIPY_CLIENT_SECRET='your_secret'
-export SPOTIPY_REDIRECT_URI='http://127.0.0.1:9090'
+SPOTIPY_CLIENT_ID='your_client_id'
+SPOTIPY_CLIENT_SECRET='your_client_secret'
+SPOTIPY_REDIRECT_URI='http://127.0.0.1:8000'
+DATABASE_URI=sqlite:////app/project.db  # can be any sqlalchemy database URI
 ```
 
-### Install
-install from main branch
+### Run 
+##### docker run
+```docker run --name spotsync ghcr.io/larsjmueller/SpotSync
+--expose 8000:8000 \
+-e SPOTIPY_CLIENT_ID='your_client_id' \
+-e SPOTIPY_CLIENT_SECRET='your_client_secret' \
+-e SPOTIPY_REDIRECT_URI='http://127.0.0.1:8000' \
+-e DATABASE_URI=sqlite:////app/project.db \
+-v ./project.db:/app/project.db
 ``` 
-python3 -m pip install https://github.com/freeek3/SpotSync/archive/main.zip
-```
-### Run
-```
-spotsync
-```
-will run you through the login process and lets you choose your playlist.
-It also instantly "syncs" your songs to the playlist, by deleting all songs in it.
-calling it again will sync the playlist again without the dialog
+##### docker-compose
+see compose.yaml for example
 
-**Important: it shows every playlist added to your account, also non editable ones**
+#### without docker
+- clone this repository and enter the directory
+- create a virtual environment with python3 (tested 3.9 and 3.10)
+- install requirements.txt
+- set environment variables with the additional `export FLASK_APP=app`
+- `flask run --host 0.0.0.0 --port 8000`
+- alternative run your preferred wsgi server
 
-Now you could setup a cronjob which runs periodically (1 a day) to add your new songs
+#### reverse-proxy
+you can run this app behind a reverse proxy with an ssl certificate 
 
 ## Usage
-```
-spotsync --help
-usage: spotsync [-h] [-p] [-m MAX] [-f FILE]
-
-Syncs newly added tracks to a selected playlist
-
-optional arguments:
--h, --help            show this help message and exit
--p, --playlist        change playlist to sync
--m MAX, --max MAX     maximum of songs in the playlist (default: 100)
--f FILE, --file FILE  change playlistfile 
-```
+You can go to your host in your browser and press Login.
+After you log in to Spotify and accept the app connection.
+Now you need to edit your playlist.
+**Important: it shows every playlist added to your account, also non-editable ones**
+After that, you are finished, and your playlist will be refreshed (everything deleted, and 100 newest songs added) daily.
+You can trigger a refresh by clicking on the Refresh button.
 
 ## Ideas
 - [ ] better sync, not only deleting
-- [ ] other savelocation
-- [ ] docker setup, but why
-
+- [x] other save location
+- [x] docker setup
+- [ ] command line app 
+- [ ] Multi-Page Playlists (more than 50)
+- [ ] Enable custom number of songs, maximum 100
+- [ ] Customize daily refresh (timezone, or direct over apscheduler)
+- [ ] Nicer UI, show current Playlist, show 100 songs
 
 ## Todos
-- TODO config.py file
-- TODO create_app 
 - TODO dev compose and production compose
-- DONE run it in a venv
 - TODO tests 
 - TODO comments, function strings
-- TODO scope in config
-- TODO extra auth/spotify function
-- TODO logging
-- TODO local install, enviroment files
+- TODO make the auth part its own function
+- TODO specific logging and error throws
 
-- TODO multi page playlists
-- TODO config individual song number up till 100
-- TODO timezone specific refreshs, grab timezone from browser
-- TODO list last 100 songs
-- TODO beautify, more templates, css
