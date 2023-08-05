@@ -80,4 +80,4 @@ You can trigger a refresh by clicking on the Refresh button.
 - [ ] check playlist writeable/exists
 - [ ] smaller docker image (https://cr0hn.medium.com/python-docker-images-in-less-than-50mb-8acc6ed776ec)
 - [ ] docstrings
-
+- [ ] automatic new builds with newer packages
