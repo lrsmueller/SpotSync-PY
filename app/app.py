@@ -15,12 +15,15 @@ app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 
+scope = "user-library-read playlist-read-private playlist-modify-private playlist-modify-public"
 #TODO config.py file
 #TODO create_app 
 #TODO dev compose and production compose
 #TODO run it in a venv
 #TODO tests 
 #TODO comments
+#TODO scope in config
+#TODO extra auth/spotify function
 
 #TODO multi page playlists
 #TODO individual song number up till 100
@@ -32,15 +35,12 @@ Session(app)
 @app.route('/')
 def index():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
-                                               cache_handler=cache_handler,
-                                               show_dialog=True)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope, cache_handler=cache_handler)
 
 
     # not signed in
     # TODO turn into own function thogether with auth_manager und cache_handler
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
-       
         auth_url = auth_manager.get_authorize_url()
         return f'<h2><a href="{auth_url}">Sign in</a></h2>'
 
@@ -74,12 +74,12 @@ def index():
 @app.route("/callback")
 def spotify_callback():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
                                                cache_handler=cache_handler,
                                                show_dialog=True)
-    # TODO own route /callback
     if request.args.get("code"):
         auth_manager.get_access_token(request.args.get("code"))
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
     return redirect('/')
 
 @app.route('/sign_out')
@@ -90,7 +90,7 @@ def sign_out():
 @app.route('/playlist')
 def playlists():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope, cache_handler=cache_handler)
     
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect('/')
@@ -108,13 +108,13 @@ def playlists():
 @app.route('/playlist/<string:playlist_id>')
 def set_playlist(playlist_id):
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope, cache_handler=cache_handler)
     
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect('/')
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     
-    #TODO check if playlist exsits
+    #TODO check if playlist exsits and if its editable
     
     current_user = db.session.query(User).filter_by(username=spotify.current_user()["id"]).first() 
     if current_user is not None: # User existiert
@@ -126,7 +126,7 @@ def set_playlist(playlist_id):
 @app.route('/refresh')
 def refresh():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope, cache_handler=cache_handler)
     
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect('/')
@@ -140,7 +140,7 @@ def refresh():
 @app.route('/timezone')
 def currently_playing():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope, cache_handler=cache_handler)
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect('/')
     timezone = "UTC"

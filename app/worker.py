@@ -11,7 +11,7 @@ from config import config
 
 engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])
 
-
+scope = "user-library-read playlist-read-private playlist-modify-private playlist-modify-public"
 #src:
 # https://stackoverflow.com/questions/41004540/using-sqlalchemy-models-in-and-out-of-flask
 
@@ -19,7 +19,7 @@ def refresh_playlist(user, spotify=None):
     
     if (spotify is None):
         cache_handler =  DBCacheHandler(db=engine, user=user)
-        auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
+        auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
                                                 cache_handler=cache_handler,
                                                 show_dialog=False)
         spotify = spotipy.Spotify(auth_manager=auth_manager)
