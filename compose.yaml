@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: app
+      target: builder
+    stop_signal: SIGINT
+    env_file: .env
+    networks:
+      - docker_proxy
+      - db
+    volumes:
+      - ./app:/app
+
+networks:
+  docker_proxy:
+    external: true  
+  db:
+
+volumes:
+  cache:
