@@ -71,10 +71,13 @@ You can trigger a refresh by clicking on the Refresh button.
 - [ ] Customize daily refresh (timezone, or direct over apscheduler)
 - [ ] Nicer UI, show current Playlist, show 100 songs
 
-## Todos
-- TODO dev compose and production compose
-- TODO tests 
-- TODO comments, function strings
-- TODO make the auth part its own function
-- TODO specific logging and error throws
+## Development Todos
+- [ ] dev compose and production compose
+- [ ] tests, docker testing build integration in github 
+- [ ] comments, function strings
+- [ ] make the auth part its own function
+- [ ] specific logging and error throws
+- [ ] check playlist writeable/exists
+- [ ] smaller docker image (https://cr0hn.medium.com/python-docker-images-in-less-than-50mb-8acc6ed776ec)
+- [ ] docstrings
 

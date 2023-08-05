@@ -25,8 +25,7 @@ def refresh_playlist(user, spotify=None):
                                                 cache_handler=cache_handler,
                                                 show_dialog=False)
         spotify = spotipy.Spotify(auth_manager=auth_manager)
-    
-    #TODO Playlist aktualsieren
+
     
     def get_newest_tracks(max=100,limit=20):
         """Obtain your newly, to your libary, added tracks 
