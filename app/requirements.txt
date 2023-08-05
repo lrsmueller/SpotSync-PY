@@ -3,3 +3,4 @@ flask_session
 Flask-SQLAlchemy
 sqlalchemy
 spotipy
+apscheduler

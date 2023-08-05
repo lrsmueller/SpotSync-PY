@@ -3,10 +3,11 @@ import os
 from flask import Flask, session, request, redirect, render_template
 from flask_session import Session
 
+from apscheduler.schedulers.background import BackgroundScheduler
 import spotipy
 
 from db import db, User
-from worker import refresh_playlist
+from worker import refresh_playlist, refresh_all_playlists
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -31,6 +32,9 @@ scope = "user-library-read playlist-read-private playlist-modify-private playlis
 
 db.init_app(app)
 Session(app)
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(refresh_all_playlists,trigger='cron', hour='2', minute='30')
 
 @app.route('/')
 def index():
@@ -153,5 +157,6 @@ def currently_playing():
 def catch_all(path):
     return redirect('/')
 
+sched.start()
 if __name__ == '__main__':
     app.run(threaded=True, host='0.0.0.0', port=80, debug=True)
