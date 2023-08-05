@@ -1,22 +1,23 @@
 version: "3.7"
 services:
-  web:
+  spotsync:
     build:
-      context: app
-      target: builder
+      context: .
+      dockerfile: Dockerfile
+      target: production
     stop_signal: SIGINT
-    env_file: .env
+    env_file: 
+      - prod.env
     networks:
       - docker_proxy
-      - db
     volumes:
       - ./app:/app
-      - /etc/localtime:/etc/localtime:ro
+      - "/etc/localtime:/etc/localtime:ro"
+    user: 1000:1000
 
 networks:
   docker_proxy:
     external: true  
-  db:
 
 volumes:
   cache:

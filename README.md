@@ -59,3 +59,22 @@ optional arguments:
 - [ ] better sync, not only deleting
 - [ ] other savelocation
 - [ ] docker setup, but why
+
+
+## Todos
+- TODO config.py file
+- TODO create_app 
+- TODO dev compose and production compose
+- DONE run it in a venv
+- TODO tests 
+- TODO comments, function strings
+- TODO scope in config
+- TODO extra auth/spotify function
+- TODO logging
+- TODO local install, enviroment files
+
+- TODO multi page playlists
+- TODO config individual song number up till 100
+- TODO timezone specific refreshs, grab timezone from browser
+- TODO list last 100 songs
+- TODO beautify, more templates, css

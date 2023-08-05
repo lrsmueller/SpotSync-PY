@@ -1,7 +1,7 @@
 .cache
 .playlist
 .env1
-.env
+*.env
 .flask_session
 project.db
 # Byte-compiled / optimized / DLL files
