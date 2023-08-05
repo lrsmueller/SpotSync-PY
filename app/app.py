@@ -36,11 +36,6 @@ def index():
                                                cache_handler=cache_handler,
                                                show_dialog=True)
 
-    # TODO own route /callback/
-    if request.args.get("code"):
-        # Step 2. Being redirected from Spotify auth page
-        auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
 
     # not signed in
     # TODO turn into own function thogether with auth_manager und cache_handler
