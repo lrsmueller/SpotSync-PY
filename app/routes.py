@@ -8,7 +8,6 @@ from app.db import db, User
 from app.worker import refresh_playlist
 
 bp = Blueprint('main', __name__)
-
 @bp.route('/')
 def index():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
@@ -42,11 +41,13 @@ def index():
         db.session.add(current_user)
         db.session.commit()
     current_app.logger.info("AUTH: " + str(auth_manager))
+    
+    # TODO template
     return f'<h2>Hi {spotify.me()["display_name"]}, ' \
            f'<small><a href="/sign_out">[sign out]<a/></small></h2>' \
            f'<a href="/playlist">change playlist</a> | ' \
            f'<a href="/refresh">Refresh your playlist</a> | ' \
-           f'<a href="/timezone">set your timezone/refresh time</a> | ' \
+           f'<a href="/refresh_time">Config your daily Refresh Time</a> | ' \
 
 @bp.route("/callback")
 def spotify_callback():
@@ -98,6 +99,7 @@ def set_playlist(playlist_id):
         current_user.playlist = playlist_id
         db.session.commit()
     
+    # TODO template
     return "Set Playlist ID: " + playlist_id + "<br> <a href=\"/\">Return</a>"
 
 @bp.route('/refresh')
@@ -114,17 +116,18 @@ def refresh():
     
     return redirect('/')
 
-@bp.route('/timezone')
+@bp.route('/refresh_time')
 def currently_playing():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
     auth_manager = spotipy.oauth2.SpotifyOAuth(scope=Config.SCOPE, cache_handler=cache_handler)
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect('/')
     timezone = "UTC"
+    
+    # TODO template
     return "Set Timezone to: " + timezone + "<br> <a href=\"/\">Return</a>" 
 
-    #TODO implemented at a later date current refresh time is UTC: 2
-
+# CATCH-ALL and redirect to main
 @bp.route('/', defaults={'path': ''})
 @bp.route('/<path:path>')
 def catch_all(path):
