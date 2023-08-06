@@ -16,6 +16,7 @@ def create_app(config_class=Config):
 
     # Initialize Flask extensions here
     db.init_app(app)
+    app.config["SESSION_SQLALCHEMY"] = db
     Session(app)
     sched = BackgroundScheduler(daemon=True) # Background Refresh Task
     
