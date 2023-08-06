@@ -21,11 +21,11 @@ def create_app(config_class=Config):
     sched = BackgroundScheduler(daemon=True) # Background Refresh Task
     
     # Adding Loggers
-    logging.getLogger('apscheduler').setLevel(logging.DEBUG)
-    logging.getLogger('app.worker').setLevel(logging.DEBUG) 
-    logging.getLogger('DBCacheHandler').setLevel(logging.DEBUG)
+    logging.getLogger('apscheduler')#.setLevel(logging.DEBUG)
+    logging.getLogger('app.worker')#.setLevel(logging.DEBUG) 
+    logging.getLogger('DBCacheHandler')#.setLevel(logging.DEBUG)
     
-    app.logger.info("start3 " + Config.SQLALCHEMY_DATABASE_URI)
+    app.logger.debug("start3 " + Config.SQLALCHEMY_DATABASE_URI)
     
     with app.app_context():
         db.create_all() # Create DB #TODO only if it doesnt exsist

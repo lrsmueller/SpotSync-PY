@@ -26,21 +26,21 @@ def index():
     current_user = db.session.query(User).filter_by(username=spotify.current_user()["id"]).first() 
     if current_user is not None: # User existiert
         current_user.token = session["token_info"]
-        current_app.logger.info("UPDATE:" + str(current_user))
+        current_app.logger.debug("UPDATE:" + str(current_user))
         db.session.commit()
     else: # User existiert nicht
-        current_app.logger.info(spotify.current_user())
+        current_app.logger.debug(spotify.current_user())
         current_user = User(
             username = spotify.current_user()["id"],
             timezone = "UTC",
             playlist = "Last100",
             token = session["token_info"]
         )
-        current_app.logger.info("NEW: " + str(current_user))
+        current_app.logger.debug("NEW: " + str(current_user))
 
         db.session.add(current_user)
         db.session.commit()
-    current_app.logger.info("AUTH: " + str(auth_manager))
+    current_app.logger.debug("AUTH: " + str(auth_manager))
     
     # TODO template
     return f'<h2>Hi {spotify.me()["display_name"]}, ' \
@@ -77,7 +77,7 @@ def playlists():
     playlists = spotify.current_user_playlists()
     render_playlist = []
     for playlist in playlists["items"]:
-        current_app.logger.info(playlist["name"])
+        current_app.logger.debug(playlist["name"])
         render_playlist.append({
                 "id": playlist["id"],
                 "name": playlist["name"]})

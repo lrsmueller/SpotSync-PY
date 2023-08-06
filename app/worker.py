@@ -15,7 +15,7 @@ from app.config import Config
 
 #TODO worker.py more abstract to use in CLI app
 logger = logging.getLogger("app.worker")
-logger.info("logging started")
+logger.debug("logging started")
 
 def refresh_playlist(user, spotify=None):
     
@@ -63,7 +63,7 @@ def refresh_playlist(user, spotify=None):
     remove_tracks()
     spotify.playlist_add_items(user.playlist,get_newest_tracks(spotify))
     
-    logger.info("refreshed Playlist")
+    logger.debug("refreshed Playlist")
     return None
     
 def refresh_all_playlists():
@@ -74,5 +74,5 @@ def refresh_all_playlists():
     for u in users:
         refresh_playlist(u)
     
-    logger.info("all Playlists refreshed")
+    logger.debug("all Playlists refreshed")
     return None
