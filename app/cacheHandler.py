@@ -15,7 +15,7 @@ class DBCacheHandler(CacheHandler):
     def __init__(self, db, user):
         self.db = db
         self.user = user
-        logger.debug("init: " + self.user)
+        logger.debug("init: " + self.user.username)
         
     def get_cached_token(self):
         token_info = None
