@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  spotsync:
+    image: spotsync
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./project.db:/app/project.db
+    ports:
+      - 8000:8000

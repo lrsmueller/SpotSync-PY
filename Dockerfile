@@ -1,33 +1,28 @@
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.10-slim
+
+EXPOSE 8000
+
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
+
+# Install pip requirements
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
 
 WORKDIR /
-
-COPY requirements.txt /
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
-
 COPY /app /app
 
-# DEBUG BUILD
-FROM builder AS debug
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
 
-RUN <<EOF
-apk update
-apk add git
-EOF
+# Enviroment Variables
+ENV DATABASE_URI sqlite:////app/project.db
 
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD ["flask", "run", "--host", "0.0.0.0", "--port", "8000", "--debug"]
-
-# PRODUCTION BUILD
-FROM builder AS production
-
-RUN pip3 install gunicorn
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0" ,"app:create_app()"]
-
-#TODO TESTING BUILD
+# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:create_app()"]

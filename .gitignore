@@ -1,8 +1,5 @@
-.cache
-.playlist
-.env1
+.vscode/
 *.env
-.flask_session
 project.db
 # Byte-compiled / optimized / DLL files
 __pycache__/

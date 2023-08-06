@@ -4,3 +4,4 @@ Flask-SQLAlchemy
 sqlalchemy
 spotipy
 apscheduler
+gunicorn
