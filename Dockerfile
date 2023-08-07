@@ -1,7 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.10-alpine
 
-LABEL org.opencontainers.image.description="Add your last 100 liked songs on Spotify to a playlist"
+LABEL org.opencontainers.image.description "Add your last 100 liked songs on Spotify to a playlist"
 
 EXPOSE 8000
 
