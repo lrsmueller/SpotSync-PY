@@ -21,7 +21,7 @@ class DBCacheHandler(CacheHandler):
         token_info = None
         try:
             token_info = self.user.token
-            logger.debug("token: " + token_info)
+            logger.debug("token: " + str(token_info))
         except KeyError:
             logger.error("Token not found in the session")
 
