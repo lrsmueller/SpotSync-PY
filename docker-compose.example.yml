@@ -1,0 +1,51 @@
+version: '3.3'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    restart: unless-stopped
+    environment:
+      - DEFAULT_EMAIL=mail@example.org
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  spotsync:
+    image: ghcr.io/larsjmueller/spotsync:latest
+    container_name: spotsync
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Paris
+      - VIRTUAL_HOST=spotify.larsmueller.me
+      - LETSENCRYPT_HOST=spotify.larsmueller.me
+      - VIRTUAL_PORT=8000
+      - SPOTIPY_CLIENT_ID= # Insert your Spotify client id
+      - SPOTIPY_CLIENT_SECRET= # Insert your Spotify client secret 
+      - SPOTIPY_REDIRECT_URI=https://spotsync.example.org/callback # edit the redirect uri 
+    volumes:
+      - spotsync:/data
+
+volumes:
+  conf:
+  certs:
+  acme:
+  vhost:
+  html:
+  spotsync:
