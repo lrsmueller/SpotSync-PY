@@ -85,49 +85,37 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
-      # - name: Sign the published Docker image
-      #   if: ${{ github.event_name != 'pull_request' }}
-      #   env:
-      #     # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-      #     TAGS: ${{ steps.meta.outputs.tags }}
-      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
-      #   # This step uses the identity token to provision an ephemeral certificate
-      #   # against the sigstore community Fulcio instance.
-      #   run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
-
-      - name: ntfy-success-notifications
+      
+      # Ntfy Notifications
+      - name: ntfy success notifications
         uses: niniyas/ntfy-action@master
         if: success()
         with:
           url: ${{ secrets.NTFY_URL }}
           topic: ${{ secrets.NTFY_TOPIC }}
-          headers: ${{ secrets.NTFY_HEADERS }}
-          priority: 3
-          tags: +1,partying_face,action,successfully,completed
-      
-      - name: ntfy-failed-notifications
-        uses: NiNiyas/ntfy-action@v1.0.1
+          tags: github,action,+1,partying_face
+          priority: 4
+          details: 'Workflow has been completed successfully!'
+          headers: '${{ secrets.NTFY_HEADERS }}'
+
+      - name: ntfy failed notifications
+        uses: niniyas/ntfy-action@master
         if: failure()
         with:
           url: ${{ secrets.NTFY_URL }}
           topic: ${{ secrets.NTFY_TOPIC }}
-          headers: ${{ secrets.NTFY_HEADERS }}
+          tags: github,action,failed,rotating_light
           priority: 5
-          tags: +1,partying_face,action,failed
-      - name: ntfy-cancelled-notifications
-        uses: NiNiyas/ntfy-action@v1.0.1
+          details: 'Workflow has failed!'
+          headers: '${{ secrets.NTFY_HEADERS }}'
+
+      - name: ntfy cancelled notifications
+        uses: niniyas/ntfy-action@master
         if: cancelled()
         with:
           url: ${{ secrets.NTFY_URL }}
           topic: ${{ secrets.NTFY_TOPIC }}
-          headers: ${{ secrets.NTFY_HEADERS }}
-          priority: 3
-          tags: +1,partying_face,action,cancelled
+          tags: github,action,cancelled,skull
+          details: 'Workflow has been cancelled!'
+          headers: '${{ secrets.NTFY_HEADERS }}'
 
