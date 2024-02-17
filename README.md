@@ -1,5 +1,7 @@
 # SpotSync
 
+Archived, Rewrote Project as a [C# Blazor App](github.com/lrsmueller/SpotSync)
+
 Sync the last 100 songs you added to your library in Spotify to a playlist. 
 
 Use Case: Download only your newest liked songs onto your smartphone rather than 2000+ if you have an extensive library like me.
